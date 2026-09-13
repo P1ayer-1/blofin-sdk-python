@@ -7,6 +7,7 @@ setup(
     package_dir={"": "src"},
     install_requires=[
         "requests>=2.25.0",
+        "aiohttp>=3.9",
         "websockets>=10.0",
     ],
     python_requires=">=3.7",
