@@ -6,6 +6,7 @@ import logging
 import hmac
 import hashlib
 import time
+import uuid
 import base64
 from typing import AsyncIterator, Dict, Optional, Tuple
 import websockets
@@ -191,8 +192,9 @@ class BlofinWsClient:
         Returns:
             Tuple[str, str]: (signature, nonce)
         """
-        # Use timestamp as nonce
-        nonce = timestamp
+        # A UUID, not the timestamp: two logins on one key in the same millisecond
+        # would send the same nonce (see BaseClient._get_nonce).
+        nonce = str(uuid.uuid4())
         
         # Fixed components for WebSocket auth
         method = "GET"

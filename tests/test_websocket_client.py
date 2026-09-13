@@ -16,6 +16,14 @@ class TestBlofinWsClient(unittest.TestCase):
         self.assertEqual(self.client.secret, self.apiSecret)
         self.assertEqual(self.client.passphrase, self.passphrase)
 
+    def test_login_nonces_differ_at_one_timestamp(self):
+        """The login nonce was the timestamp itself: two logins on one key in the same
+        millisecond repeated it, the REST client's 152407 failure (2026-09-13)."""
+        first_sign, first = self.client._generateSignature("1789335574914")
+        second_sign, second = self.client._generateSignature("1789335574914")
+        self.assertNotEqual(first, second)
+        self.assertNotEqual(first_sign, second_sign)
+
 class TestBlofinWsPublicClient(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.client = BlofinWsPublicClient()

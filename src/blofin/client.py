@@ -2,6 +2,7 @@ import base64
 import hmac
 import json
 import time
+import uuid
 from hashlib import sha256
 from typing import Dict, List, Optional, Union
 from urllib.parse import urlencode
@@ -47,7 +48,11 @@ class BaseClient:
         return str(int(time.time() * 1000))
 
     def _get_nonce(self) -> str:
-        return str(int(time.time() * 1000))
+        # A UUID, as BloFin's authentication docs ask: the nonce generator "must not
+        # produce duplicates within the time difference range allowed by the server".
+        # The millisecond clock this used to be does: processes signing with one key
+        # in the same millisecond collide (152407 "Repeated nonce", 2026-09-13).
+        return str(uuid.uuid4())
 
     def _sign_request(
         self,
